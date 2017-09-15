@@ -1,92 +1,123 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Set;
 
-public class Manager {
+public class Manager { // Interação com o jogador (entrada e saída de dados)
 
 	private String tema;
 	private String palavra;
-	private List<String> letrasAcertadas;
-	private List<String> letrasChutadas;
+	private List<String> palavrauser; // Palavra sendo mostrada
+	private Set<String> letrasAcertadas;
+	private Set<String> letrasChutadas;
 	private int tentativasErros;
 	private int tentativas;
-	private List<String> temasAvaliable;
-	private BancoWords banco;
+	private int maxTentativas;
+	private Visual visual;
+	private GerenciadorTentativas gt;
 	
 	public Manager() {
-		this.banco = new BancoWords();
-		this.temasAvaliable = banco.getTemas();
-		//this.palavra = banco.gerarWord();
 		this.tentativas = 0;
 		this.tentativasErros = 0;
-		this.letrasAcertadas = new ArrayList<String>();
+		this.maxTentativas = 0;
+		this.letrasAcertadas = new HashSet<String>();
+		this.letrasChutadas = new HashSet<String>();
+		this.palavrauser = new ArrayList<String>();
+		visual = new Visual();
+		gt = new GerenciadorTentativas();
 	}
 	
-	public void gerarInstrucoes(){
-		//Gerando Instruções Iniciais
+	public void startGame(){
+		visual.gerarInstrucoesIniciais(); // Gerando instruções iniciais
+		this.setTema(chooseTema()); // Escolhendo tema
+		
+		visual.escolherTentativas(); //Escolhendo qtd tentativas max
+		this.setMaxTentativas(chooseTentativas());
+		
+		String word = visual.escolherPalavra(tema); // Escolhendo palavra
+		this.setPalavra(word); // Palavra escolhida
+		
+		visual.aboutWord(this.getTema(), this.getPalavra());
+		visual.gerarEspacamentoInicial(this.getPalavra(), this.getPalavrauser());
+		cicloGame();
+	}
+	
+	public String chooseTema(){
 		Scanner sc = new Scanner(System.in);
-		String inicio = "Bem-vindo, para começar, escolha um tema: ";
-		String temas = "";
-		for(int i = 0; i < temasAvaliable.size(); i++){
-			temas = temas + temasAvaliable.get(i) + " ----- ";
+		return sc.nextLine();
+	}
+	
+	public int chooseTentativas(){
+		Scanner sc = new Scanner(System.in);
+		int max = 10;
+		String n = sc.nextLine();
+		if(n.equals("Sim") || n.equals("sim")){
+			System.out.println("Digite a quantidade máxima de tentativas: ");
+			max = Integer.parseInt(sc.nextLine());
 		}
-		//Mostrando temas disponíveis
-		System.out.println(inicio + "\n" + temas);
-		
-		//Inserindo tema
-		this.setTema(sc.nextLine());
-		
-		this.setPalavra(banco.gerarWord(this.getTema()));
-		System.out.println("Palavra escolhida! Hora de Iniciar o jogo!!!");
-		gerarForca();
+		return max;
 	}
 	
-	public void gerarForca(){
-		System.out.println("Tema: " + this.getTema() + "; Letras: " + this.getPalavra().length());
+	public void cicloGame(){ // Ciclo de vida da jogada (até morrer ou ganhar)
 		
-		System.out.println("Quantidade de Tentativas: " + this.getTentativas() + " \nQuantidade de Erros: " + this.getTentativasErros());
-		gerarEspacamentoForcaInicial(this.getPalavra(), this.getLetrasAcertadas());
-		
-	}
-	
-	public void gerarEspacamentoForcaInicial(String palavra, List<String> letrasAcertadas){
-		int sizeWord = palavra.length();
-//		for(int i = 0; i < sizeWord; i++){
-//			letrasAcertadas.add("_");
-//		}
-//		
-//		String teste = "";
-//		
-//		
-//		for(int i = 0; i < sizeWord; i++){
-//			teste += letrasAcertadas.get(i);
-//		}
-//		
-//		System.out.println(teste);
-
-		String teste2 = "";
-		char[] caracteres = palavra.toCharArray(); 
-		
-		String letra = "a";
-		for(int i = 0; i < caracteres.length; i++){
-			if(letra.charAt(0) == caracteres[i]){
-				teste2 += caracteres[i] + "; ";
+		while(stopGame() == true){
+			visual.aboutTries(this.getTentativas(), this.getTentativasErros());
+			
+			Scanner sc = new Scanner(System.in);
+			System.out.println(">> Digite uma letra: ");
+			Tentativa t = new Tentativa(sc.nextLine());
+			
+			optionsGame(t.getLetra());
+			
+			if(this.getLetrasAcertadas().contains(t.getLetra()) || this.getLetrasChutadas().contains(t.getLetra())){
+				System.out.println("Essa letra já foi digitada!");
+				visual.mostrarForca(this.getPalavrauser());
 			}else{
-				teste2 += "_; ";
+				gt.analise(this.getPalavra(), this.getLetrasAcertadas(), this.getLetrasChutadas(), t, this.getPalavrauser());	
+				this.setTentativas(gt.getTentativas());
+				this.setTentativasErros(gt.getTentativasErros());
+				
+				visual.mostrarForca(this.getPalavrauser());
 			}
 		}
-		System.out.println(teste2);
 	}
 	
-	public void analisarPalavra(Tentativa t){
-		String letra = t.getLetra();
-//		if(){
-//			
-//		}
+	public boolean stopGame(){
+		if(this.getTentativasErros() == this.getMaxTentativas()){
+			visual.lose(this.getPalavra(),  this.getTentativas(), this.getTentativasErros());
+			return false;
+		}
+		if(this.getLetrasAcertadas().size() == this.getPalavra().length()){
+			visual.win(this.getPalavra(),  this.getTentativas(), this.getTentativasErros());
+			return false;
+		}
+		return true;
 	}
 
+	public void optionsGame(String option){
+		if(option.equals("help")){
+			visual.help(this.getLetrasAcertadas(), this.getLetrasChutadas(), this.getTema(), this.getPalavra(), this.getTentativas(), this.getTentativasErros());
+		}else if(option.equals("restart")){
+			restart();
+			startGame();
+		}
+	}
+	
+	public void restart(){
+		this.tema = null;
+		this.palavra = null;			
+		this.tentativas = 0;
+		this.tentativasErros = 0;
+		this.letrasAcertadas = new HashSet<String>();
+		this.letrasChutadas = new HashSet<String>();
+		this.palavrauser = new ArrayList<String>();
+		visual = new Visual();
+		gt = new GerenciadorTentativas();
+	}
+	
 	public String getTema() {
 		return tema;
 	}
@@ -111,14 +142,6 @@ public class Manager {
 		this.tentativas = tentativas;
 	}
 
-	public List<String> getTemasAvaliable() {
-		return temasAvaliable;
-	}
-
-	public void setTemasAvaliable(List<String> temasAvaliable) {
-		this.temasAvaliable = temasAvaliable;
-	}
-
 	public int getTentativasErros() {
 		return tentativasErros;
 	}
@@ -127,20 +150,36 @@ public class Manager {
 		this.tentativasErros = tentativasErros;
 	}
 
-	public List<String> getLetrasAcertadas() {
+	public Set<String> getLetrasAcertadas() {
 		return letrasAcertadas;
 	}
 
-	public void setLetrasAcertadas(List<String> letrasAcertadas) {
+	public void setLetrasAcertadas(Set<String> letrasAcertadas) {
 		this.letrasAcertadas = letrasAcertadas;
 	}
-	
-	public List<String> getLetrasChutadas() {
+
+	public Set<String> getLetrasChutadas() {
 		return letrasChutadas;
 	}
 
-	public void setLetrasChutadas(List<String> letrasChutadas) {
+	public void setLetrasChutadas(Set<String> letrasChutadas) {
 		this.letrasChutadas = letrasChutadas;
+	}
+
+	public List<String> getPalavrauser() {
+		return palavrauser;
+	}
+
+	public void setPalavrauser(List<String> palavrauser) {
+		this.palavrauser = palavrauser;
+	}
+
+	public int getMaxTentativas() {
+		return maxTentativas;
+	}
+
+	public void setMaxTentativas(int maxTentativas) {
+		this.maxTentativas = maxTentativas;
 	}
 	
 }

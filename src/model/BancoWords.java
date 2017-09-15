@@ -3,7 +3,7 @@ package model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BancoWords {
+public class BancoWords { // Base/repositório de palavras a serem usadas no jogo
 
 	private List<String> temas;
 	
@@ -12,6 +12,7 @@ public class BancoWords {
 		temas.add("Objetos");
 		temas.add("Animal");
 		temas.add("Lugar");
+		temas.add("Disciplina");
 	}
 	
 	public String gerarWord(String tema){ //Método para gerar as palavras randômicas e retornar com base no tema e na palavra
@@ -21,6 +22,8 @@ public class BancoWords {
 			return "gato";
 		}else if(tema.equals("Lugar")){
 			return "fortaleza";
+		}else if(tema.equals("Disciplina")){
+			return "engenharia de software";
 		}
 		return null;
 	}

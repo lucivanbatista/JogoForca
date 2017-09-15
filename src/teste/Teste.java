@@ -11,7 +11,7 @@ public class Teste {
 				
 		Manager jogo = new Manager();
 		
-		jogo.gerarInstrucoes();
+		jogo.startGame();
 		
 	}
 
