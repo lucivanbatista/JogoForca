@@ -16,8 +16,11 @@ public class Manager { // Interação com o jogador (entrada e saída de dados)
 	private int tentativasErros;
 	private int tentativas;
 	private int maxTentativas;
+	private int sizePalavra;
+	private int sizeLetrasAcertadas;
 	private Visual visual;
 	private GerenciadorTentativas gt;
+	private char[] caracteres;
 	
 	public Manager() {
 		this.tentativas = 0;
@@ -26,6 +29,7 @@ public class Manager { // Interação com o jogador (entrada e saída de dados)
 		this.letrasAcertadas = new HashSet<String>();
 		this.letrasChutadas = new HashSet<String>();
 		this.palavrauser = new ArrayList<String>();
+		this.sizeLetrasAcertadas = 0;
 		visual = new Visual();
 		gt = new GerenciadorTentativas();
 	}
@@ -39,10 +43,22 @@ public class Manager { // Interação com o jogador (entrada e saída de dados)
 		
 		String word = visual.escolherPalavra(tema); // Escolhendo palavra
 		this.setPalavra(word); // Palavra escolhida
+		this.caracteres = this.palavra.toCharArray();
+		this.setSizePalavra(sizePalavra(this.getPalavra(), this.getCaracteres()));
 		
-		visual.aboutWord(this.getTema(), this.getPalavra());
-		visual.gerarEspacamentoInicial(this.getPalavra(), this.getPalavrauser());
+		visual.aboutWord(this.getTema(), this.getSizePalavra());
+		visual.gerarEspacamentoInicial(this.getPalavra(), this.getPalavrauser(), this.getCaracteres());
 		cicloGame();
+	}
+	
+	public int sizePalavra(String palavra, char[] caracteres){
+		int size = 0;
+		for(int i = 0; i < caracteres.length; i++){
+			if(caracteres[i] != ' '){
+				size++;
+			}
+		}
+		return size;
 	}
 	
 	public String chooseTema(){
@@ -74,13 +90,13 @@ public class Manager { // Interação com o jogador (entrada e saída de dados)
 			
 			if(this.getLetrasAcertadas().contains(t.getLetra()) || this.getLetrasChutadas().contains(t.getLetra())){
 				System.out.println("Essa letra já foi digitada!");
-				visual.mostrarForca(this.getPalavrauser());
+				visual.mostrarForca(this.getPalavrauser(), this.getCaracteres());
 			}else{
-				gt.analise(this.getPalavra(), this.getLetrasAcertadas(), this.getLetrasChutadas(), t, this.getPalavrauser());	
+				this.setSizeLetrasAcertadas(gt.analise(this.getPalavra(), this.getLetrasAcertadas(), this.getLetrasChutadas(), t, this.getPalavrauser(), this.getSizeLetrasAcertadas()));	
 				this.setTentativas(gt.getTentativas());
 				this.setTentativasErros(gt.getTentativasErros());
 				
-				visual.mostrarForca(this.getPalavrauser());
+				visual.mostrarForca(this.getPalavrauser(), this.getCaracteres());
 			}
 		}
 	}
@@ -90,7 +106,7 @@ public class Manager { // Interação com o jogador (entrada e saída de dados)
 			visual.lose(this.getPalavra(),  this.getTentativas(), this.getTentativasErros());
 			return false;
 		}
-		if(this.getLetrasAcertadas().size() == this.getPalavra().length()){
+		if(this.getSizeLetrasAcertadas() == this.getSizePalavra()){
 			visual.win(this.getPalavra(),  this.getTentativas(), this.getTentativasErros());
 			return false;
 		}
@@ -99,7 +115,9 @@ public class Manager { // Interação com o jogador (entrada e saída de dados)
 
 	public void optionsGame(String option){
 		if(option.equals("help")){
-			visual.help(this.getLetrasAcertadas(), this.getLetrasChutadas(), this.getTema(), this.getPalavra(), this.getTentativas(), this.getTentativasErros());
+			visual.help(this.getLetrasAcertadas(), this.getLetrasChutadas(), this.getTema(), this.getSizePalavra(), this.getTentativas(), this.getTentativasErros(), this.getSizeLetrasAcertadas());
+			visual.mostrarForca(this.getPalavrauser(), this.getCaracteres());
+			cicloGame();
 		}else if(option.equals("restart")){
 			restart();
 			startGame();
@@ -180,6 +198,36 @@ public class Manager { // Interação com o jogador (entrada e saída de dados)
 
 	public void setMaxTentativas(int maxTentativas) {
 		this.maxTentativas = maxTentativas;
+	}
+
+	
+	public char[] getCaracteres() {
+		return caracteres;
+	}
+
+	
+	public void setCaracteres(char[] caracteres) {
+		this.caracteres = caracteres;
+	}
+
+	
+	public int getSizePalavra() {
+		return sizePalavra;
+	}
+	
+
+	public void setSizePalavra(int sizePalavra) {
+		this.sizePalavra = sizePalavra;
+	}
+
+	
+	public int getSizeLetrasAcertadas() {
+		return sizeLetrasAcertadas;
+	}
+
+	
+	public void setSizeLetrasAcertadas(int sizeLetrasAcertadas) {
+		this.sizeLetrasAcertadas = sizeLetrasAcertadas;
 	}
 	
 }

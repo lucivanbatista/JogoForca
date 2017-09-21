@@ -34,35 +34,49 @@ public class Visual { //Apresentação visual da forca e informações de status
 		System.out.println("Deseja escolher uma quantidade de tentativa?\n Sim ou Nao?");
 	}
 	
-	public void mostrarForca(List<String> palavrauser){
+	public void mostrarForca(List<String> palavrauser, char[] caracteres){
 		String wordForca = "";
-		for(String n : palavrauser){
-			wordForca += n + "; ";
+		for(int i = 0; i < caracteres.length; i++){
+			if(caracteres[i] == ' '){
+				wordForca += " ";
+			}else{
+				wordForca += palavrauser.get(i) + "; ";
+			}
+			
 		}
 		System.out.println(wordForca);
 	}
 	
-	public void gerarEspacamentoInicial(String palavra, List<String> palavrauser){
+	public void gerarEspacamentoInicial(String palavra, List<String> palavrauser, char[] caracteres){
 		for(int i = 0; i < palavra.length(); i++){
-			palavrauser.add("_");
+			if(caracteres[i] != ' '){
+				palavrauser.add("_");
+			}else{
+				palavrauser.add(" ");
+			}
 		}
-		mostrarForca(palavrauser);
+		mostrarForca(palavrauser, caracteres);
 	}
 	
-	public void aboutWord(String tema, String palavra){
-		System.out.println("Tema: " + tema + "; Letras: " + palavra.length());
+	public void aboutWord(String tema, int sizePalavra){
+		System.out.println("Tema: " + tema + "; Letras: " + sizePalavra);
 	}
 
 	public void aboutTries(int tentativas, int tentativasErros){
 		System.out.println("Quantidade de Tentativas Geral: " + tentativas + " \nQuantidade de Erros: " + tentativasErros);
 	}
 	
-	public void help(Set<String> LetrasAcertadas, Set<String> LetrasChutadas, String Tema, String Palavra, int tentativas, int tentativasErros){
-		System.out.println(" ---------- ***** / HELP / ***** ----------");
-		aboutWord(Tema, Palavra);
-		aboutTries(tentativas, tentativasErros);
+	public void aboutLetters(Set<String> LetrasAcertadas, Set<String> LetrasChutadas, int sizeLetrasAcertadas){
+		System.out.println("Quantidade de Letras Acertadas: " + sizeLetrasAcertadas);
 		System.out.println("Letras Acertadas: " + LetrasAcertadas);
 		System.out.println("Letras Chutadas: " + LetrasChutadas);
+	}
+	
+	public void help(Set<String> LetrasAcertadas, Set<String> LetrasChutadas, String Tema, int sizePalavra, int tentativas, int tentativasErros, int sizeLetrasAcertadas){
+		System.out.println(" ---------- ***** / HELP / ***** ----------");
+		aboutWord(Tema, sizePalavra);
+		aboutTries(tentativas, tentativasErros);
+		aboutLetters(LetrasAcertadas, LetrasChutadas, sizeLetrasAcertadas);
 		System.out.println(" ---------- ***** / END HELP / ***** ----------");
 	}
 

@@ -13,7 +13,7 @@ public class GerenciadorTentativas { // Controle de tentativas, erros e acertos
 		this.tentativasErros = 0;
 	}
 	
-	public void analise(String palavra, Set<String> letrasAcertadas, Set<String> letrasChutadas, Tentativa t, List<String> palavrauser){
+	public int analise(String palavra, Set<String> letrasAcertadas, Set<String> letrasChutadas, Tentativa t, List<String> palavrauser, int sizeLetrasAcertadas){
 		String letra = t.getLetra();
 		boolean identificador = false;
 		char[] caracteres = palavra.toCharArray(); 
@@ -25,6 +25,7 @@ public class GerenciadorTentativas { // Controle de tentativas, erros e acertos
 					palavrauser.add(i, letra.charAt(0) + "");
 					identificador = true;
 					letrasAcertadas.add(letra.charAt(0) + ""); // Adicionar ao conjunto de letras já acertadas
+					sizeLetrasAcertadas++;
 				}
 			}
 		}
@@ -32,8 +33,8 @@ public class GerenciadorTentativas { // Controle de tentativas, erros e acertos
 		letrasChutadas.add(letra.charAt(0) + ""); // Adicionar ao conjunto de letras já usadas
 		gerenciarQtdTentativa(identificador);
 		identificador = false;
+		return sizeLetrasAcertadas;
 	}
-	
 	
 	public void gerenciarQtdTentativa(boolean identificador){
 		if(identificador == true){
