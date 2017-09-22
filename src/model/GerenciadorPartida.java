@@ -3,17 +3,17 @@ package model;
 import java.util.List;
 import java.util.Set;
 
-public class GerenciadorTentativas { // Controle de tentativas, erros e acertos
+public class GerenciadorPartida { // Controle de tentativas, erros e acertos
 
 	private int tentativas;
 	private int tentativasErros;
 	
-	public GerenciadorTentativas() {
+	public GerenciadorPartida() {
 		this.tentativas = 0;
 		this.tentativasErros = 0;
 	}
 	
-	public int analise(String palavra, Set<String> letrasAcertadas, Set<String> letrasChutadas, Tentativa t, List<String> palavrauser, int sizeLetrasAcertadas){
+	public int analise(String palavra, Set<String> letrasAcertadas, Set<String> letrasChutadas, GerenciadorLetra t, List<String> palavrauser, int sizeLetrasAcertadas){
 		String letra = t.getLetra();
 		boolean identificador = false;
 		char[] caracteres = palavra.toCharArray(); 

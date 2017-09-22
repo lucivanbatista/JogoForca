@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
 
-public class Manager { // Interação com o jogador (entrada e saída de dados)
+public class GerenciadorJogo { // Interação com o jogador (entrada e saída de dados)
 
 	private String tema;
 	private String palavra;
@@ -18,11 +18,11 @@ public class Manager { // Interação com o jogador (entrada e saída de dados)
 	private int maxTentativas;
 	private int sizePalavra;
 	private int sizeLetrasAcertadas;
-	private Visual visual;
-	private GerenciadorTentativas gt;
+	private ViewForca visual;
+	private GerenciadorPartida gt;
 	private char[] caracteres;
 	
-	public Manager() {
+	public GerenciadorJogo() {
 		this.tentativas = 0;
 		this.tentativasErros = 0;
 		this.maxTentativas = 0;
@@ -30,8 +30,8 @@ public class Manager { // Interação com o jogador (entrada e saída de dados)
 		this.letrasChutadas = new HashSet<String>();
 		this.palavrauser = new ArrayList<String>();
 		this.sizeLetrasAcertadas = 0;
-		visual = new Visual();
-		gt = new GerenciadorTentativas();
+		visual = new ViewForca();
+		gt = new GerenciadorPartida();
 	}
 	
 	public void startGame(){
@@ -84,7 +84,7 @@ public class Manager { // Interação com o jogador (entrada e saída de dados)
 			
 			Scanner sc = new Scanner(System.in);
 			System.out.println(">> Digite uma letra: ");
-			Tentativa t = new Tentativa(sc.nextLine());
+			GerenciadorLetra t = new GerenciadorLetra(sc.nextLine());
 			
 			optionsGame(t.getLetra());
 			
@@ -132,8 +132,8 @@ public class Manager { // Interação com o jogador (entrada e saída de dados)
 		this.letrasAcertadas = new HashSet<String>();
 		this.letrasChutadas = new HashSet<String>();
 		this.palavrauser = new ArrayList<String>();
-		visual = new Visual();
-		gt = new GerenciadorTentativas();
+		visual = new ViewForca();
+		gt = new GerenciadorPartida();
 	}
 	
 	public String getTema() {

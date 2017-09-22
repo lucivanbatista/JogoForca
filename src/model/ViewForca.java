@@ -3,12 +3,12 @@ package model;
 import java.util.List;
 import java.util.Set;
 
-public class Visual { //Apresentação visual da forca e informações de status do jogo (máscara da palavra, erros, tentativas, etc)
+public class ViewForca { //Apresentação visual da forca e informações de status do jogo (máscara da palavra, erros, tentativas, etc)
 
 	private BancoWords banco;
 	private List<String> temasAvaliable;
 	
-	public Visual() {
+	public ViewForca() {
 		this.banco = new BancoWords();
 		this.temasAvaliable = banco.getTemas();
 	}

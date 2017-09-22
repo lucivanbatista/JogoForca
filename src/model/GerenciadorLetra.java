@@ -1,10 +1,10 @@
 package model;
 
-public class Tentativa {
+public class GerenciadorLetra {
 
 	public String letra;
 
-	public Tentativa(String letra) {
+	public GerenciadorLetra(String letra) {
 		this.letra = semAcento(letra);
 		this.letra = this.letra.toLowerCase();
 	}
